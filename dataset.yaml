@@ -1,0 +1,10 @@
+qri: ds:0
+name: nyc_for_hire_vehicles
+meta:
+  title: For Hire Vehicles (FHV) - Active
+  description: TLC authorized For-Hire vehicles that are active. This list is accurate to the date and time represented in the Last Date Updated and Last Time Updated fields. For inquiries about the contents of this dataset, please email licensinginquiries@tlc.nyc.gov.
+  downloadUrl: https://data.cityofnewyork.us/api/views/8wbx-tsch/rows.csv?accessType=DOWNLOAD
+transform:
+  scriptPath: download.star
+viz:
+  scriptPath: template.html

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ .Meta.Title }}</title>
+    <meta charset="UTF-8" /> 
+    <style type="text/css">
+      body {
+        font-family: avenir-next, sans-serif;
+      }
+      p { max-width: 600px; }
+      .info {
+        width: 960px;
+        margin: 4em auto;
+      }
+    </style>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript">
+      window.data = {{ .Body }}
+    </script>
+  </head>
+  <body>
+
+    <!-- Introduction -->
+    <div class="info">
+      <h1>{{ .Meta.Title }}</h1>
+      <h4>Last Updated: {{ .Commit.Timestamp.Format "02 Jan 2006" }}</h4>
+      <h1 id="total">{{ .Body.total }}</h1>
+      <h3>Active For Hire Vehicles in New York</h3>
+      <p>A "For Hire Vehicle" in New York City is any über, lyft, regular limosine service, black car service, etc. Basically, anything that isn't a yellow or green taxi, (and even then, lots of yellow & green taxis that are also registered as for-hire-vehicles).</p>
+    </div>
+    <script>
+      // add comma to total count
+      document.getElementById('total').textContent = ({{ .Body.total }}).toLocaleString('en')
+    </script>
+
+
+    <!-- Bases -->
+    <div class="info">
+      <h1>For Hire Vehicle Bases</h1>
+      <h1>{{ len .Body.base_vehicle }}</h1>
+      <h3>Base FHV Companies</h3>
+      <p>For hire vehicles report to a "base company" that hosts them. Most of these base companies operate. Some The following is a tally of the total number of for hire vehicles each company is currently supporting</p>
+      
+    </div>
+
+    <div id="bases" style="width:960px;height:500px;margin:4em auto;"></div>
+    <script>
+      const bases = Object.keys(data.base_vehicle)
+        // .filter((key) => data.base_vehicle[key] > 5)
+        .sort((a,b) =>  data.base_vehicle[a] > data.base_vehicle[b])
+        .map((key,i) => {
+          return {
+            name: key,
+            x: i,
+            y: data.base_vehicle[key]
+          }
+      })
+      
+      Highcharts.chart('bases', {
+        // options - see https://api.highcharts.com/highcharts
+        chart : { type : 'column', zoomType: 'x' },
+        title: { text: 'base companies' },
+        series: [
+          {
+            name: "base company",
+            data: bases,
+          }
+        ]
+      });
+    </script>
+
+    
+    <!-- Model Years -->
+    <div class="info">
+      <h2>Vehicle Model Years</h2>
+      <p>Each registered vehicle comes with information on the year it was registered. getting rid of a few erroneous data entries, these are the model years of for hire vehicles currently on the road</p>
+    </div>
+    <div id="vehicles" style="width:960px;height:500px;margin:4em auto;"></div>
+    <script>
+      const vehicleYears = Object.keys(data.vehicle_year)
+        .filter((key) => {
+          return +key >= 1985 && +key < 2021
+        })
+        .map((key) => {
+          return {
+            name: key,
+            x: +key,
+            y: data.vehicle_year[key]
+          }
+      })
+      
+      Highcharts.chart('vehicles', {
+        chart : { type : 'column', zoomType: 'xy' },
+        title: { text: 'vehicle model year' },
+        series: [
+          {
+            name: "model year",
+            data: vehicleYears,
+          }
+        ]
+      });
+    </script>
+    
+    
+
+    <div class="info">
+      <hr />
+      <p>{{ .Meta.Description }}</p>
+      <small>{{ .Peername}}/{{ .Name }}<br/><span style="color:#888">{{ .Path }}</span></small>
+    </div>
+  </body>
+</html>
