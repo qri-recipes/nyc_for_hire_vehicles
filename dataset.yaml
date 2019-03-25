@@ -7,4 +7,5 @@ meta:
 transform:
   scriptPath: download.star
 viz:
+  format: html
   scriptPath: template.html
